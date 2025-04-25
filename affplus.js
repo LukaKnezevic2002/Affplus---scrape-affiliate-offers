@@ -21,52 +21,51 @@ async function scrapeWebsite(url){
     return new Promise((resolve, reject) => {
         request(url, async function(error,response,html){
             if(!error && response.statusCode == 200){
-                var $ = cheerio.load(html)
+                var $ = cheerio.load(html);
         
                 try{
-                    let status = 'ok'
-        
+                    let status = 'ok';
+
                     let labels = $('.table tbody tr th');
 
-                    let logo = ""
+                    let logo = "";
                     if($(".flex.w-full.mb-3 .ml-4 img") != null){
-                      logo = $(".flex.w-full.mb-3 .ml-4 img").attr("src")
+                      logo = $(".flex.w-full.mb-3 .ml-4 img").attr("src");
                     }
 
-                    let cover = ""
+                    let cover = "";
                     if($(".bg-cover") != null){
                         const styleAttr = $(".bg-cover").attr("style");
                         const backgroundImageUrl = /url\((.+)\)/.exec(styleAttr)[1].replace(/['"]+/g, "");
-                        cover = backgroundImageUrl
+                        cover = backgroundImageUrl;
                     }
 
-                    let name = ""
+                    let name = "";
                     if($(".font-extrabold.text-base.mr-3") != null) {
-                      name = $(".font-extrabold.text-base.mr-3").text().trim()
+                      name = $(".font-extrabold.text-base.mr-3").text().trim();
                     }
 
-                    let trackingsoftware = ""
+                    let trackingsoftware = "";
                     if($(".hidden.text-xs.leading-none span").first() != null){
                         trackingsoftware = $(".hidden.text-xs.leading-none span").first().text().trim();
                     }
 
-                    let paymentFreqency = ""
+                    let paymentFreqency = "";
                     if($(".hidden.text-xs.leading-none span").eq(2) != null){
                         paymentFreqency = $(".hidden.text-xs.leading-none span").eq(2).text().trim();
                     }
 
-                    let reviewsLink = ""
+                    let reviewsLink = "";
                     if($(".hidden.text-xs.leading-none a").first() != null){
                         reviewsLink = $(".hidden.text-xs.leading-none a").first().text().trim().replace(/[^0-9]/g, "");
                     }
 
-                    let offersLink = ""
+                    let offersLink = "";
                     if($(".hidden.text-xs.leading-none a").eq(1) != null){
                        offersLink = $(".hidden.text-xs.leading-none a").eq(1).text().trim().replace(/[^0-9]/g, "");
                     }
         
-                    var returnValues = {
-        
+                    resolve({
                         status,
                         logo,
                         cover,
@@ -75,34 +74,19 @@ async function scrapeWebsite(url){
                         paymentFreqency,
                         reviewsLink,
                         offersLink
-
-                    }
-                    resolve(returnValues);
+                    });
                 }
-        
-               
-                catch{
-                    var status = 'offline'
-                    var logo = ""
-                    var cover = ""
-                    var name = ""
-                    var trackingsoftware = ""
-                    var paymentFreqency = ""
-                    var reviewsLink = ""
-                    var offersLink = ""
-        
-                    var returnErrValues = [
-                        
-                        status, 
-                        logo,
-                        cover,
-                        name,
-                        trackingsoftware,
-                        paymentFreqency,
-                        reviewsLink,
-                        offersLink
-                    ]
-                   reject(returnErrValues)
+                catch {
+                    reject({
+                        status: 'offline',
+                        logo: "",
+                        cover: "",
+                        name: "",
+                        trackingsoftware: "",
+                        paymentFreqency: "",
+                        reviewsLink: "",
+                        offersLink: ""
+                    });
                 }
                 
             }
